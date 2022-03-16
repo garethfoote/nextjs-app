@@ -1,26 +1,37 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-
-export default function Home({posts}) {
-  return (<>
-    <h1>Titles</h1>
-    <div>
-    {posts && posts.map((post)=> (
-        <div key={post.id}>
-          <h2>{post.attributes.Title}</h2>
-        </div>
-    ))}
-    </div>
-    </>)
+export default function Home({ posts }) {
+  return (
+    <>
+      <h1>Titles</h1>
+      <div>
+        {posts &&
+          posts.map((post) => (
+            <div key={post.id}>
+              <a href={`${post.attributes.Slug}/${post.id}`}>
+                {post.attributes.Title}
+              </a>
+              <img
+                width="100"
+                src={
+                  post.attributes.MainImage?.data.attributes.formats.small.url
+                }
+                title={
+                  post.attributes.MainImage?.data.attributes.alternativeText
+                }
+              />
+            </div>
+          ))}
+      </div>
+    </>
+  );
 }
 
-export async function getStaticProps(){
+export async function getStaticProps() {
   // get posts
-  const res = await fetch("http://localhost:1337/api/Posts");
+  const res = await fetch(
+    "https://strapi-app-c93qz.ondigitalocean.app/api/Posts?populate=MainImage"
+  );
   const posts = await res.json();
-  // console.log(posts.data)
   return {
-    props: { posts: posts.data }
-  }
+    props: { posts: posts.data },
+  };
 }
